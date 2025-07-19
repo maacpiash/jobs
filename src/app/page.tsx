@@ -4,10 +4,7 @@ export default function Home() {
 			<header>
 				<form action="/api/auth/signin" method="POST">
 					<input type="hidden" name="provider" value="github" />
-					<button
-						type="submit"
-						className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
-					>
+					<button type="submit" className="btn btn-primary">
 						Sign in with GitHub
 					</button>
 				</form>
