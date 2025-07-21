@@ -17,4 +17,8 @@ type BaseJobApplication = {
 	notes?: string
 }
 
-export type JobApplication = BaseJobApplication & Interview
+type PrefixPropNamesWithString<T, Prefix extends string> = {
+	[K in keyof T as `${Prefix}${Capitalize<string & K>}`]: T[K]
+}
+
+export type JobApplication = BaseJobApplication & PrefixPropNamesWithString<Interview, 'interview'>
