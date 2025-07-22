@@ -12,16 +12,24 @@ export function JobApplicationForm({ modalRef }: { modalRef?: RefObject<HTMLDial
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault()
 		if (!formRef.current) return
+		setLoading(true)
 
 		const formData = new FormData(formRef.current)
 		const payload = Object.fromEntries(formData.entries())
 		console.table(payload)
 		modalRef?.current?.close()
 
-		// await fetch('/api/job-applications', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(payload),
-		// })
+		const res = await fetch('/api/interviews', {
+			method: 'POST',
+			body: JSON.stringify(payload),
+			headers: { 'Content-Type': 'application/json' },
+		})
+
+		if (res.ok) {
+			router.refresh()
+			formRef.current.reset()
+		}
+		setLoading(false)
 	}
 
 	return (
@@ -102,8 +110,8 @@ export function JobApplicationForm({ modalRef }: { modalRef?: RefObject<HTMLDial
 					Cancel
 				</button>
 
-				<button type="submit" className="btn btn-primary">
-					Submit
+				<button type="submit" className="btn btn-primary" disabled={loading}>
+					{loading ? 'Submitting...' : 'Submit'}
 				</button>
 			</div>
 		</form>

@@ -1,10 +1,27 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { auth } from 'src/auth'
 import { SignInButton, SignOutButton, JobApplicationsTable, ShowFormModal } from 'src/components'
 import { JobApplication } from 'src/lib'
 
+const client = DynamoDBDocumentClient.from(
+	new DynamoDBClient({
+		region: process.env.AWS_REGION || 'ap-southeast-2',
+	})
+)
+
 export default async function Home() {
 	const session = await auth()
-	const applications: JobApplication[] = []
+	const command = new QueryCommand({
+		TableName: process.env.DYNAMODB_TABLE_NAME!,
+		KeyConditionExpression: 'applicantEmailAddress = :email',
+		ExpressionAttributeValues: {
+			':email': session?.user?.email,
+		},
+	})
+
+	const result = await client.send(command)
+	const applications: JobApplication[] = (result.Items as JobApplication[]) ?? []
 
 	return (
 		<>

@@ -8,17 +8,27 @@ type Props = {
 }
 
 export function InterviewForm({ modalRef, jobApplicationId }: Props) {
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		const formData = new FormData(event.currentTarget)
 		const data = Object.fromEntries(formData.entries())
 		console.table(data)
+		await fetch('/api/interviews', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		})
 		modalRef?.current?.close()
 	}
+
+	const closeModal = () => modalRef?.current?.close()
 
 	return (
 		<form className="max-w-2xl p-6 mx-auto space-y-4 shadow rounded-xl bg-base-100" onSubmit={handleSubmit}>
 			<h3 className="text-xl font-semibold">Interview Info</h3>
+			{jobApplicationId && <input type="hidden" name="jobApplicationId" value={jobApplicationId} />}
 
 			<div className="form-control">
 				<label htmlFor="dateIntDate" className="label">
@@ -81,11 +91,7 @@ export function InterviewForm({ modalRef, jobApplicationId }: Props) {
 			</div>
 
 			<div className="flex flex-row justify-between">
-				<button
-					type="button"
-					className="btn btn-secondary btn-outline"
-					onClick={() => modalRef?.current?.close()}
-				>
+				<button type="button" className="btn btn-secondary btn-outline" onClick={closeModal}>
 					Cancel
 				</button>
 
