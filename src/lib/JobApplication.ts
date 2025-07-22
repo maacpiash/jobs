@@ -8,9 +8,8 @@ type BaseJobApplication = {
 	location?: string
 	salary?: number
 	description?: string
-	applicationDate: string
+	applicationDate?: string
 	outcome: 'pending' | 'unlikely' | 'rejected' | 'advanced'
-	nextInterviewDate?: number // UNIX Timestamp in milliseconds
 	history: string // JSON stringified array of `Interview` objects
 	createdAt: number
 	updatedAt: number
