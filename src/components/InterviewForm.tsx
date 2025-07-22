@@ -1,6 +1,6 @@
 'use client'
 
-import { RefObject, useEffect, useRef } from 'react'
+import { RefObject } from 'react'
 
 type Props = {
 	modalRef?: RefObject<HTMLDialogElement | null>
@@ -8,18 +8,6 @@ type Props = {
 }
 
 export function InterviewForm({ modalRef, jobApplicationId }: Props) {
-	const intDatePicker = useRef(null)
-
-	useEffect(() => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		let picker: any
-		// Dynamically import Pikaday to avoid SSR issues
-		import('pikaday').then(({ default: Pikaday }) => {
-			picker = new Pikaday({ field: intDatePicker.current })
-		})
-		return () => picker?.destroy()
-	}, [])
-
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		const formData = new FormData(event.currentTarget)
@@ -36,15 +24,7 @@ export function InterviewForm({ modalRef, jobApplicationId }: Props) {
 				<label htmlFor="dateIntDate" className="label">
 					<span className="label-text">Date</span>
 				</label>
-				<input
-					id="txtAppDate"
-					type="text"
-					name="applicationDate"
-					className="input pika-single"
-					defaultValue={new Date().toISOString().split('T')[0]}
-					ref={intDatePicker}
-					inputMode="none"
-				/>
+				<input id="txtAppDate" type="date" name="applicationDate" className="input" />
 			</div>
 
 			<div className="form-control">

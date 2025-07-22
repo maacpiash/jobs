@@ -1,21 +1,13 @@
 'use client'
 
-import { RefObject, useEffect, useRef } from 'react'
+import { RefObject, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
 
 export function JobApplicationForm({ modalRef }: { modalRef?: RefObject<HTMLDialogElement | null> }) {
+	const router = useRouter()
+	const [loading, setLoading] = useState(false)
 	const formRef = useRef<HTMLFormElement>(null)
-	const appDatePicker = useRef(null)
-
-	useEffect(() => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		let picker: any
-		// Dynamically import Pikaday to avoid SSR issues
-		import('pikaday').then(({ default: Pikaday }) => {
-			picker = new Pikaday({ field: appDatePicker.current })
-		})
-		return () => picker?.destroy()
-	}, [])
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault()
@@ -79,15 +71,7 @@ export function JobApplicationForm({ modalRef }: { modalRef?: RefObject<HTMLDial
 				<label htmlFor="txtAppDate" className="label">
 					<span className="label-text">Application Date</span>
 				</label>
-				<input
-					id="txtAppDate"
-					type="text"
-					name="applicationDate"
-					className="input pika-single"
-					defaultValue={new Date().toISOString().split('T')[0]}
-					ref={appDatePicker}
-					inputMode="none"
-				/>
+				<input id="txtAppDate" type="date" name="applicationDate" className="input" />
 			</div>
 
 			<div className="form-control">
