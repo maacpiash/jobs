@@ -37,6 +37,10 @@ export default async function Home() {
 					<SignInButton />
 				</main>
 			)}
+			<footer className="fixed bottom-0 flex flex-wrap items-center justify-center w-full p-4 text-gray-500">
+				<a href="https://github.com/maacpiash/Jobs" target="_blank" rel="noopener noreferrer" className="mr-4">
+					GitHub Repository
+				</a>
 			</footer>
 		</>
 	)
