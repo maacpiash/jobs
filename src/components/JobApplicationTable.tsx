@@ -1,9 +1,19 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, type ReactElement } from 'react'
 import { useRouter } from 'next/navigation'
 import type { JobApplication } from 'src/lib'
-import { InterviewForm, ShowDateTime } from '.'
+import { DropDown, InterviewForm, ShowDateTime } from '.'
+
+type StatusType = JobApplication['outcome']
+const statuses: StatusType[] = ['pending', 'unlikely', 'rejected', 'advanced']
+
+const jobAppStatusMap: Record<StatusType, string> = {
+	advanced: 'badge-success',
+	pending: 'badge-secondary',
+	rejected: 'badge-error',
+	unlikely: 'badge-warning',
+}
 
 type Props = {
 	applications: JobApplication[]
@@ -13,6 +23,7 @@ export function JobApplicationsTable({ applications }: Props) {
 	const router = useRouter()
 	const modalRef = useRef<HTMLDialogElement>(null)
 	const [jobAppId, setJobAppId] = useState<string | null>(null)
+	const [firstInterview, setFirstInterview] = useState(false)
 	return (
 		<>
 			<table className="table table-zebra">
@@ -45,60 +56,66 @@ export function JobApplicationsTable({ applications }: Props) {
 									: 'N/A'}
 							</td>
 							<td>
-								<span
-									className={`badge ${
-										app.outcome === 'advanced'
-											? 'badge-success'
-											: app.outcome === 'pending'
-												? 'badge-warning'
-												: app.outcome === 'rejected' || app.outcome === 'unlikely'
-													? 'badge-error'
-													: ''
-									}`}
+								<DropDown
+									title={app.outcome}
+									summaryStyle={`capitalize list-none cursor-pointer badge ${jobAppStatusMap[app.outcome]} m-1`}
+									ulStyle="w-36"
 								>
-									{app.outcome}
-								</span>
+									{statuses.reduce((acc, status) => {
+										if (status !== app.outcome)
+											acc.push(
+												<li key={status} className="p-2">
+													<button
+														className={`capitalize badge ${jobAppStatusMap[status]}`}
+														onClick={() => {
+															fetch(`/api/job-applications?id=${app.id}`, {
+																method: 'PUT',
+																headers: { 'Content-Type': 'application/json' },
+																body: JSON.stringify({ outcome: status }),
+															})
+																.then(res => {
+																	if (res.ok) router.refresh()
+																})
+																.catch(console.error)
+														}}
+													>
+														{status}
+													</button>
+												</li>
+											)
+										return acc
+									}, [] as ReactElement<'li'>[])}
+								</DropDown>
 							</td>
 							<td>{app.interviewDate ? <ShowDateTime dt={new Date(app.interviewDate)} /> : 'N/A'}</td>
 							<td>
-								<details
-									className="dropdown"
-									ref={el => {
-										if (el) (app as any)._detailsRef = el
-									}}
-								>
-									<summary className="m-1 btn">Actions</summary>
-									<ul className="z-10 p-2 shadow-sm menu dropdown-content bg-base-100 rounded-box w-52">
-										<li>
-											<button
-												onClick={() => {
-													modalRef.current?.show()
-													setJobAppId(app.id)
-													;(app as any)._detailsRef?.removeAttribute('open')
-												}}
-											>
-												Add interview
-											</button>
-										</li>
-										<li>
-											<button
-												className="text-red-500"
-												onClick={async () => {
-													const response = await fetch(`/api/job-applications?id=${app.id}`, {
-														method: 'DELETE',
-														headers: {
-															'Content-Type': 'application/json',
-														},
-													})
-													if (response.ok) router.refresh()
-													;(app as any)._detailsRef?.removeAttribute('open')
-												}}
-											>
-												Delete
-											</button>
-										</li>
-									</ul>
-								</details>
+								<DropDown title="Actions" summaryStyle="m-1 btn">
+									<li>
+										<button
+											onClick={() => {
+												setJobAppId(app.id)
+												setFirstInterview(!app.interviewDate)
+												modalRef.current?.showModal()
+											}}
+										>
+											Add interview
+										</button>
+									</li>
+									<li>
+										<button
+											className="text-red-500"
+											onClick={async () => {
+												const response = await fetch(`/api/job-applications?id=${jobAppId}`, {
+													method: 'DELETE',
+													headers: { 'Content-Type': 'application/json' },
+												})
+												if (response.ok) router.refresh()
+											}}
+										>
+											Delete
+										</button>
+									</li>
+								</DropDown>
 							</td>
 						</tr>
 					))}
@@ -106,7 +123,11 @@ export function JobApplicationsTable({ applications }: Props) {
 			</table>
 
 			<dialog ref={modalRef} className="modal">
-				<InterviewForm modalRef={modalRef} jobApplicationId={jobAppId as string} />
+				<InterviewForm
+					modalRef={modalRef}
+					jobApplicationId={jobAppId as string}
+					firstInterview={firstInterview}
+				/>
 			</dialog>
 		</>
 	)
