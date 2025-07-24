@@ -12,11 +12,19 @@ const client = DynamoDBDocumentClient.from(
 
 export default async function Home() {
 	const session = await auth()
+	if (!session || !session.user) {
+		return (
+			<main className="flex flex-col items-center justify-center min-h-screen p-4">
+				<p className="mb-4 text-lg">Please sign in to track your job applications.</p>
+				<SignInButton />
+			</main>
+		)
+	}
 	const command = new QueryCommand({
 		TableName: process.env.DYNAMODB_TABLE_NAME!,
 		KeyConditionExpression: 'applicantEmailAddress = :email',
 		ExpressionAttributeValues: {
-			':email': session?.user?.email,
+			':email': session.user.email,
 		},
 	})
 
@@ -27,14 +35,8 @@ export default async function Home() {
 		<>
 			<header className="flex items-center justify-between p-4">
 				<h1 className="text-2xl font-bold">Job Application Tracker</h1>
-				{session?.user ? (
-					<>
-						<p className="text-lg">Signed in as {session.user.name}</p>
-						<SignOutButton />
-					</>
-				) : (
-					<SignInButton />
-				)}
+				<p className="text-lg">Signed in as {session.user.name}</p>
+				<SignOutButton />
 			</header>
 			{session?.user ? (
 				<main className="w-full p-6 shadow bg-base-100 rounded-xl">

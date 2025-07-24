@@ -19,7 +19,7 @@ export function JobApplicationForm({ modalRef }: { modalRef?: RefObject<HTMLDial
 		console.table(payload)
 		modalRef?.current?.close()
 
-		const res = await fetch('/api/interviews', {
+		const res = await fetch('/api/job-applications', {
 			method: 'POST',
 			body: JSON.stringify(payload),
 			headers: { 'Content-Type': 'application/json' },
