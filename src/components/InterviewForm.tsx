@@ -1,19 +1,22 @@
 'use client'
 
 import { RefObject } from 'react'
+import { useRouter } from 'next/navigation'
 
 type Props = {
 	modalRef?: RefObject<HTMLDialogElement | null>
 	jobApplicationId?: string
+	firstInterview?: boolean
 }
 
-export function InterviewForm({ modalRef, jobApplicationId }: Props) {
+export function InterviewForm({ modalRef, jobApplicationId, firstInterview }: Props) {
+	const router = useRouter()
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		const formData = new FormData(event.currentTarget)
 		const data = Object.fromEntries(formData.entries())
 		console.table(data)
-		await fetch('/api/interviews', {
+		const response = await fetch('/api/interviews' + (firstInterview ? '?first=1' : ''), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -21,6 +24,7 @@ export function InterviewForm({ modalRef, jobApplicationId }: Props) {
 			body: JSON.stringify(data),
 		})
 		modalRef?.current?.close()
+		if (response.ok) router.refresh()
 	}
 
 	const closeModal = () => modalRef?.current?.close()
@@ -34,14 +38,14 @@ export function InterviewForm({ modalRef, jobApplicationId }: Props) {
 				<label htmlFor="dateIntDate" className="label">
 					<span className="label-text">Date</span>
 				</label>
-				<input id="txtAppDate" type="date" name="applicationDate" className="input" />
+				<input id="dateIntDate" type="date" name="interviewDate" className="input" />
 			</div>
 
 			<div className="form-control">
 				<label htmlFor="dateIntTime" className="label">
 					<span className="label-text">Time</span>
 				</label>
-				<input id="dateIntTime" type="time" className="input" min="09:00" max="18:00" defaultValue="14:29" />
+				<input id="dateIntTime" type="time" name="interviewTime" className="input" />
 			</div>
 
 			<div className="form-control">
