@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { JobApplication } from 'src/lib'
-import { InterviewForm } from '.'
+import { InterviewForm, ShowDateTime } from '.'
 
 type Props = {
 	applications: JobApplication[]
@@ -59,7 +59,7 @@ export function JobApplicationsTable({ applications }: Props) {
 									{app.outcome}
 								</span>
 							</td>
-							<td>{app.interviewDate ? new Date(app.interviewDate).toLocaleDateString() : 'N/A'}</td>
+							<td>{app.interviewDate ? <ShowDateTime dt={new Date(app.interviewDate)} /> : 'N/A'}</td>
 							<td>
 								<details
 									className="dropdown"
