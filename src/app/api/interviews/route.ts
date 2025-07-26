@@ -39,10 +39,8 @@ export async function POST(req: NextRequest) {
 	const body = await req.json()
 	if (!body.jobApplicationId) return NextResponse.json({ error: 'Missing job application ID' }, { status: 400 })
 	const first = req.nextUrl.searchParams.get('first')
-	console.table(body)
 	const { jobApplicationId, ...newInterview } = body
 	const userEmail = session.user.email!
-	console.table(newInterview)
 
 	if (first) {
 		try {
@@ -55,7 +53,7 @@ export async function POST(req: NextRequest) {
 					ExpressionAttributeValues: {
 						':interviewDate': newInterview.interviewDateTime,
 						':interviewType': newInterview.interviewType,
-						':interviewRound': newInterview.interviewRound,
+						':interviewRound': newInterview.interviewRound ?? 1,
 						':interviewNotes': newInterview.interviewNotes,
 						':interviewLocation': newInterview.interviewLocation,
 						':interviewLink': newInterview.interviewLink,
@@ -104,7 +102,6 @@ export async function POST(req: NextRequest) {
 		}
 
 		const updatedHistory = [...currentHistory, newInterviewInHistory].sort((a, b) => a.date - b.date)
-		console.table(updatedHistory.map(int => int.date))
 		const upcomingInterview = updatedHistory[0]
 
 		// Step 3: Save everything
@@ -117,7 +114,7 @@ export async function POST(req: NextRequest) {
 				ExpressionAttributeValues: {
 					':interviewDate': upcomingInterview.date,
 					':interviewType': upcomingInterview.type ?? '',
-					':interviewRound': upcomingInterview.round ?? 2,
+					':interviewRound': upcomingInterview.round ?? updatedHistory.length,
 					':interviewNotes': upcomingInterview.notes ?? '',
 					':interviewLocation': upcomingInterview.location ?? '',
 					':interviewLink': upcomingInterview.link ?? '',
