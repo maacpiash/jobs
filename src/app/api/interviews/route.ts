@@ -94,7 +94,16 @@ export async function POST(req: NextRequest) {
 		// Step 2: Update history array
 		const currentHistory = currentItem.history ? (JSON.parse(currentItem.history) as Interview[]) : []
 
-		const updatedHistory = [...currentHistory, newInterview].sort((a, b) => a.date - b.date)
+		const newInterviewInHistory: Interview = {
+			date: newInterview.interviewDateTime,
+			type: newInterview.interviewType,
+			round: newInterview.interviewRound,
+			notes: newInterview.interviewNotes,
+			location: newInterview.interviewLocation,
+			link: newInterview.interviewLink,
+		}
+
+		const updatedHistory = [...currentHistory, newInterviewInHistory].sort((a, b) => a.date - b.date)
 		console.table(updatedHistory.map(int => int.date))
 		const upcomingInterview = updatedHistory[0]
 
