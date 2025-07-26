@@ -101,7 +101,9 @@ export async function POST(req: NextRequest) {
 			link: newInterview.interviewLink,
 		}
 
-		const updatedHistory = [...currentHistory, newInterviewInHistory].sort((a, b) => a.date - b.date)
+		const updatedHistory = [...currentHistory, newInterviewInHistory]
+			.filter(int => Boolean(int.date))
+			.sort((a, b) => a.date! - b.date!)
 		const upcomingInterview = updatedHistory[0]
 
 		// Step 3: Save everything

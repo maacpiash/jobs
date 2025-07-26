@@ -1,5 +1,5 @@
 export type Interview = {
-	date: number
+	date?: number
 	type?: 'technical' | 'behavioral' | 'face-to-face' | 'other'
 	notes?: string
 	round: number
