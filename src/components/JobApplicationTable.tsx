@@ -105,7 +105,7 @@ export function JobApplicationsTable({ applications }: Props) {
 										<button
 											className="text-red-500"
 											onClick={async () => {
-												const response = await fetch(`/api/job-applications?id=${jobAppId}`, {
+												const response = await fetch(`/api/job-applications?id=${app.id}`, {
 													method: 'DELETE',
 													headers: { 'Content-Type': 'application/json' },
 												})
