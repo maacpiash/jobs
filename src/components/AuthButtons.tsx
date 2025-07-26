@@ -1,12 +1,21 @@
 'use client'
 
+import { Github, Linkedin } from 'lucide-react'
 import { signIn, signOut } from 'next-auth/react'
 
 export function SignInButton() {
 	return (
-		<button type="button" onClick={() => signIn('github')} className="btn btn-primary">
-			Sign in with GitHub
-		</button>
+		<div className="flex flex-col gap-4">
+			<button type="button" onClick={() => signIn('github')} className="btn btn-primary">
+				<Github />
+				Sign in with GitHub
+			</button>
+
+			<button type="button" onClick={() => signIn('linkedin')} className="btn btn-secondary">
+				<Linkedin />
+				Sign in with LinkedIn
+			</button>
+		</div>
 	)
 }
 
