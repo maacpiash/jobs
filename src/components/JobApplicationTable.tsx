@@ -4,6 +4,7 @@ import { useRef, useState, type ReactElement } from 'react'
 import { useRouter } from 'next/navigation'
 import type { JobApplication } from 'src/lib'
 import { DropDown, InterviewForm, ShowDateTime } from '.'
+import { InterviewsModal } from '.'
 
 type StatusType = JobApplication['outcome']
 const statuses: StatusType[] = ['pending', 'unlikely', 'rejected', 'advanced']
@@ -24,6 +25,7 @@ export function JobApplicationsTable({ applications }: Props) {
 	const modalRef = useRef<HTMLDialogElement>(null)
 	const [jobAppId, setJobAppId] = useState<string | null>(null)
 	const [firstInterview, setFirstInterview] = useState(false)
+	const [showModal, setShowModal] = useState(false)
 	return (
 		<>
 			<table className="table table-zebra">
@@ -103,6 +105,16 @@ export function JobApplicationsTable({ applications }: Props) {
 									</li>
 									<li>
 										<button
+											onClick={() => {
+												setJobAppId(app.id)
+												setShowModal(true)
+											}}
+										>
+											View interviews
+										</button>
+									</li>
+									<li>
+										<button
 											className="text-red-500"
 											onClick={async () => {
 												const response = await fetch(`/api/job-applications?id=${app.id}`, {
@@ -129,6 +141,12 @@ export function JobApplicationsTable({ applications }: Props) {
 					firstInterview={firstInterview}
 				/>
 			</dialog>
+			{showModal && (
+				<InterviewsModal
+					application={applications.filter(app => app.id === jobAppId)[0]}
+					onClose={() => setShowModal(false)}
+				/>
+			)}
 		</>
 	)
 }
