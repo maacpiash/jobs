@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Server-side",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "bun run dev",
+            "envFile": "${workspaceFolder}/.env",
+        },
+        {
+            "name": "Client-side",
+            "type": "firefox",
+            "request": "launch",
+            "url": "http://localhost:3000",
+        },
+        {
+            "name": "Full-stack",
+            "type": "node-terminal",
+            "envFile": "${workspaceFolder}/.env",
+            "request": "launch",
+            "command": "bun run dev",
+            "serverReadyAction": {
+                "pattern": "(https?://.+)",
+                "uriFormat": "%s",
+                "action": "debugWithChrome"
+            },
+        },
+    ]
+}
