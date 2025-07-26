@@ -23,7 +23,10 @@ export function InterviewForm({ modalRef, jobApplicationId, firstInterview }: Pr
 			body: JSON.stringify({ interviewDateTime, ...payload }),
 		})
 		modalRef?.current?.close()
-		if (response.ok) router.refresh()
+		if (response.ok) {
+			event.currentTarget.reset()
+			router.refresh()
+		}
 	}
 
 	const closeModal = () => modalRef?.current?.close()

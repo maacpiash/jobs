@@ -11,7 +11,7 @@ type Props = {
 }
 
 export function InterviewsModal({ application, onClose }: Props) {
-	const [localHistory, setLocalHistory] = useState<Interview[]>(() => JSON.parse(application.history))
+	const [localHistory, setLocalHistory] = useState<Interview[]>(() => JSON.parse(application.history ?? '[]'))
 	const handleDeleteInterview = async (date: number) => {
 		const res = await fetch(`/api/interviews?id=${application.id}&date=${date}`, {
 			method: 'DELETE',
@@ -41,11 +41,11 @@ export function InterviewsModal({ application, onClose }: Props) {
 								</tr>
 							</thead>
 							<tbody>
-								{localHistory.map(interview => (
-									<tr key={interview.date}>
+								{localHistory.map((interview, index) => (
+									<tr key={index}>
 										<td>{interview.round}</td>
 										<td>
-											<ShowDateTime dt={new Date(interview.date)} />
+											{interview.date ? <ShowDateTime dt={new Date(interview.date)} /> : 'N/A'}
 										</td>
 										<td className="capitalize">{interview.type}</td>
 										<td>{interview.notes}</td>
@@ -63,7 +63,7 @@ export function InterviewsModal({ application, onClose }: Props) {
 												aria-label="Delete interview"
 												role="button"
 												className="w-5 h-5 cursor-pointer text-gray-800 dark:text-white hover:text-red-500"
-												onClick={() => handleDeleteInterview(interview.date)}
+												onClick={() => interview.date ?? handleDeleteInterview(interview.date!)}
 											/>
 										</td>
 									</tr>
