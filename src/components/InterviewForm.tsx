@@ -14,14 +14,13 @@ export function InterviewForm({ modalRef, jobApplicationId, firstInterview }: Pr
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		const formData = new FormData(event.currentTarget)
-		const data = Object.fromEntries(formData.entries())
-		console.table(data)
+		const { interviewDate, interviewTime, ...payload } = Object.fromEntries(formData.entries())
+		const interviewDateTime = new Date(`${interviewDate} ${interviewTime}`).getTime()
+		console.table(payload)
 		const response = await fetch('/api/interviews' + (firstInterview ? '?first=1' : ''), {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ interviewDateTime, ...payload }),
 		})
 		modalRef?.current?.close()
 		if (response.ok) router.refresh()
@@ -38,14 +37,14 @@ export function InterviewForm({ modalRef, jobApplicationId, firstInterview }: Pr
 				<label htmlFor="dateIntDate" className="label">
 					<span className="label-text">Date</span>
 				</label>
-				<input id="dateIntDate" type="date" name="interviewDate" className="input" />
+				<input id="dateIntDate" type="date" name="interviewDate" className="input" required />
 			</div>
 
 			<div className="form-control">
 				<label htmlFor="dateIntTime" className="label">
 					<span className="label-text">Time</span>
 				</label>
-				<input id="dateIntTime" type="time" name="interviewTime" className="input" />
+				<input id="dateIntTime" type="time" name="interviewTime" className="input" required />
 			</div>
 
 			<div className="form-control">
