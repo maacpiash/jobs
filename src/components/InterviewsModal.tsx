@@ -1,17 +1,17 @@
 'use client'
 
 import { Interview, JobApplication } from 'src/lib'
-import { useState } from 'react'
+import { useState, RefObject } from 'react'
 import { Trash, ExternalLink } from 'lucide-react'
 import { ShowDateTime } from './ShowDateTime'
 
 type Props = {
 	application: JobApplication
-	onClose: () => void
+	modalRef?: RefObject<HTMLDialogElement | null>
 }
 
-export function InterviewsModal({ application, onClose }: Props) {
-	const [localHistory, setLocalHistory] = useState<Interview[]>(() => JSON.parse(application.history ?? '[]'))
+export function InterviewsModal({ application, modalRef }: Props) {
+	const [localHistory, setLocalHistory] = useState<Interview[]>(() => JSON.parse(application?.history ?? '[]'))
 	const handleDeleteInterview = async (date: number) => {
 		const res = await fetch(`/api/interviews?id=${application.id}&date=${date}`, {
 			method: 'DELETE',
@@ -23,7 +23,7 @@ export function InterviewsModal({ application, onClose }: Props) {
 	}
 
 	return (
-		<div className="modal modal-open">
+		<dialog className="modal" ref={modalRef}>
 			<div className="modal-box max-w-3xl">
 				<h3 className="font-bold text-lg">Interview History</h3>
 
@@ -76,11 +76,11 @@ export function InterviewsModal({ application, onClose }: Props) {
 				)}
 
 				<div className="modal-action">
-					<button className="btn btn-outline btn-error" onClick={onClose}>
+					<button className="btn btn-outline btn-error" onClick={() => modalRef?.current?.close()}>
 						Close
 					</button>
 				</div>
 			</div>
-		</div>
+		</dialog>
 	)
 }

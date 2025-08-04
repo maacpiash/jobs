@@ -22,10 +22,11 @@ type Props = {
 
 export function JobApplicationsTable({ applications }: Props) {
 	const router = useRouter()
-	const modalRef = useRef<HTMLDialogElement>(null)
+	const intFormModalRef = useRef<HTMLDialogElement>(null)
+	const intListModalRef = useRef<HTMLDialogElement>(null)
 	const [jobAppId, setJobAppId] = useState<string | null>(null)
 	const [firstInterview, setFirstInterview] = useState(false)
-	const [showModal, setShowModal] = useState(false)
+
 	return (
 		<>
 			<table className="table table-zebra">
@@ -97,7 +98,7 @@ export function JobApplicationsTable({ applications }: Props) {
 											onClick={() => {
 												setJobAppId(app.id)
 												setFirstInterview(!app.interviewDate)
-												modalRef.current?.showModal()
+												intFormModalRef.current?.showModal()
 											}}
 										>
 											Add interview
@@ -107,7 +108,7 @@ export function JobApplicationsTable({ applications }: Props) {
 										<button
 											onClick={() => {
 												setJobAppId(app.id)
-												setShowModal(true)
+												intListModalRef.current?.showModal()
 											}}
 										>
 											View interviews
@@ -134,19 +135,17 @@ export function JobApplicationsTable({ applications }: Props) {
 				</tbody>
 			</table>
 
-			<dialog ref={modalRef} className="modal">
+			<dialog ref={intFormModalRef} className="modal">
 				<InterviewForm
-					modalRef={modalRef}
+					modalRef={intFormModalRef}
 					jobApplicationId={jobAppId as string}
 					firstInterview={firstInterview}
 				/>
 			</dialog>
-			{showModal && (
-				<InterviewsModal
-					application={applications.filter(app => app.id === jobAppId)[0]}
-					onClose={() => setShowModal(false)}
-				/>
-			)}
+			<InterviewsModal
+				application={applications.filter(app => app.id === jobAppId)[0]}
+				modalRef={intListModalRef}
+			/>
 		</>
 	)
 }
