@@ -5,11 +5,12 @@ import { useEffect, useRef, type ReactNode, type ReactElement } from 'react'
 type DropDownProps = {
 	title: ReactNode
 	children: ReactElement<'li'> | ReactElement<'li'>[]
+	detailsStyle?: string
 	summaryStyle?: string
 	ulStyle?: string
 }
 
-export function DropDown({ title, children, summaryStyle, ulStyle }: DropDownProps) {
+export function DropDown({ title, children, detailsStyle, summaryStyle, ulStyle }: DropDownProps) {
 	const dropdownRef = useRef<HTMLDetailsElement>(null)
 
 	useEffect(() => {
@@ -19,10 +20,10 @@ export function DropDown({ title, children, summaryStyle, ulStyle }: DropDownPro
 	}, [])
 
 	return (
-		<details ref={dropdownRef} className="dropdown">
+		<details ref={dropdownRef} className={`dropdown ${detailsStyle ?? ''}`}>
 			<summary className={summaryStyle ?? 'list-none cursor-pointer'}>{title}</summary>
 			<ul
-				className={`z-10 p-2 shadow-sm menu dropdown-content bg-base-100 rounded-box w-36 ${ulStyle ?? ''}`}
+				className={`z-10 p-2 menu dropdown-content bg-base-100 rounded-box ${ulStyle ?? ''}`}
 				onClick={() => dropdownRef.current?.removeAttribute('open')}
 			>
 				{children}
