@@ -3,7 +3,7 @@
 import { Github, Linkedin } from 'iconoir-react'
 import { signIn, signOut } from 'next-auth/react'
 
-export function SignInButton() {
+export function SignInButtons() {
 	return (
 		<div className="flex flex-col gap-4">
 			<button type="button" onClick={() => signIn('github')} className="btn btn-primary">

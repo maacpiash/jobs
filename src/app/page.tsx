@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { auth } from 'src/auth'
-import { SignInButton, SignOutButton, ShowFormModal } from 'src/components'
+import { SignInButtons, ShowFormModal } from 'src/components'
 import { JobApplications } from 'src/components'
 
 export default async function Home() {
@@ -10,7 +10,7 @@ export default async function Home() {
 		return (
 			<main className="flex flex-col items-center justify-center min-h-screen p-4">
 				<p className="mb-4 text-lg">Please sign in to track your job applications.</p>
-				<SignInButton />
+				<SignInButtons />
 			</main>
 		)
 	}
