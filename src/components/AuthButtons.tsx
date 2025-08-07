@@ -1,6 +1,6 @@
 'use client'
 
-import { Github, Linkedin } from 'lucide-react'
+import { Github, Linkedin } from 'iconoir-react'
 import { signIn, signOut } from 'next-auth/react'
 
 export function SignInButton() {
